@@ -1,0 +1,29 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.50'
+    id 'application'
+}
+
+group 'dev.namhyun'
+version '1.0-SNAPSHOT'
+
+application {
+    mainClassName = 'dev.namhyun.algorithm.assist.java.analyzer.AppKt'
+}
+
+task runApp(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'dev.namhyun.algorithm.assist.java.analyzer.AppKt'
+    args '-v'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2"
+    implementation "org.slf4j:slf4j-simple:1.7.5"
+    implementation "com.github.ajalt:clikt:2.2.0"
+    implementation "io.github.microutils:kotlin-logging:1.7.6"
+}
