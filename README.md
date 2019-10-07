@@ -10,7 +10,7 @@
 
 ### java-analyzer
 
-- Analyze '.class' file by JDI Java Debug Interface.
+- Analyze '.class' file by Java Debug Interface.
 - Provided info list
   - local variables per line
   - reference count per line
