@@ -1,4 +1,4 @@
-package dev.namhyun.algorithm.assist.java.analyzer
+package dev.namhyun.java.analyzer
 
 import com.sun.jdi.*
 import com.sun.jdi.connect.Connector
@@ -8,6 +8,7 @@ import com.sun.jdi.connect.VMStartException
 import com.sun.jdi.event.*
 import com.sun.jdi.request.EventRequest
 import dev.namhyun.algorithm.assist.java.analyzer.model.*
+import dev.namhyun.java.analyzer.model.*
 import mu.KotlinLogging
 import java.io.IOException
 import java.io.PrintWriter

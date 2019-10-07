@@ -1,4 +1,4 @@
-package dev.namhyun.algorithm.assist.java.analyzer
+package dev.namhyun.java.analyzer
 
 fun getWorkingDirectory(): String {
     return System.getProperty("user.dir")

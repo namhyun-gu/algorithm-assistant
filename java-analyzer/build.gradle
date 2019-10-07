@@ -7,12 +7,12 @@ group 'dev.namhyun'
 version '1.0-SNAPSHOT'
 
 application {
-    mainClassName = 'dev.namhyun.algorithm.assist.java.analyzer.AppKt'
+    mainClassName = 'dev.namhyun.java.analyzer.AppKt'
 }
 
 task runApp(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'dev.namhyun.algorithm.assist.java.analyzer.AppKt'
+    main = 'dev.namhyun.java.analyzer.AppKt'
     args '-v'
 }
 

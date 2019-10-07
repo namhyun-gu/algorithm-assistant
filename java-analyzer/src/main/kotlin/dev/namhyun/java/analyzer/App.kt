@@ -1,4 +1,4 @@
-package dev.namhyun.algorithm.assist.java.analyzer
+package dev.namhyun.java.analyzer
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
@@ -7,8 +7,8 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
-import dev.namhyun.algorithm.assist.java.analyzer.model.ExceptionFrame
-import dev.namhyun.algorithm.assist.java.analyzer.model.StepFrame
+import dev.namhyun.java.analyzer.model.ExceptionFrame
+import dev.namhyun.java.analyzer.model.StepFrame
 import java.io.FileWriter
 import java.io.PrintWriter
 
