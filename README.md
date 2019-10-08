@@ -23,30 +23,30 @@
 Input java source
 
 ```java
-import java.util.Scanner;
-
-public class Main2 {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int count = scanner.nextInt();
-        for (int index = 0; index < count; index++) {
-            System.out.println("Hello");
-        }
-    }
-}
+1   import java.util.Scanner;
+2 
+3   public class Main2 {
+4     public static void main(String[] args) {
+5        Scanner scanner = new Scanner(System.in);
+6        int count = scanner.nextInt();
+7        for (int index = 0; index < count; index++) {
+8            System.out.println("Hello");
+9        }
+10    }
+11  }
 ```
 
 Analzer result
 
 ```bash
-PS C:\Users\namhyun-gu\Downloads> java -jar .\java.analyzer-1.0-SNAPSHOT.jar -i hello.txt -o output.txt Main2
+PS C:\Users\namhyun-gu\Downloads> java -jar .\java.analyzer-1.0-SNAPSHOT.jar -i hello.txt Main2
 Java Analyzer
 
 - mainClassName: Main2
 - inputFile: hello.txt
 - workingDir: C:\Users\namhyun-gu\Downloads
-- verbose: true
-- outputFile: output.txt
+- verbose: false
+- outputFile: null
 
 === Output ===
 
