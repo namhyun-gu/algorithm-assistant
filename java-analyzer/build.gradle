@@ -10,10 +10,23 @@ application {
     mainClassName = 'dev.namhyun.java.analyzer.AppKt'
 }
 
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/kotlin'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'dev.namhyun.java.analyzer.AppKt'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 task runApp(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'dev.namhyun.java.analyzer.AppKt'
-    args '-v'
+    args '-v', '-i=hello.txt'
 }
 
 repositories {
@@ -21,9 +34,9 @@ repositories {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.3.50"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2"
-    implementation "org.slf4j:slf4j-simple:1.7.5"
     implementation "com.github.ajalt:clikt:2.2.0"
     implementation "io.github.microutils:kotlin-logging:1.7.6"
+    implementation "org.slf4j:slf4j-simple:1.7.26"
 }

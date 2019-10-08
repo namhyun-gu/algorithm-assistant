@@ -1,4 +1,4 @@
-package dev.namhyun.algorithm.assist.java.analyzer.model
+package dev.namhyun.java.analyzer.model
 
 open class Variable(
     open val type: String,

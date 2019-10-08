@@ -15,25 +15,28 @@ import java.io.PrintWriter
 class App : CliktCommand() {
     private val defaultWorkingDir = getWorkingDirectory()
 
-    private val className: String by argument()
+    private val mainClassName: String by argument()
         .default("Main")
-
-    private val workingDir: String by option("-d", "--dir", help = "")
-        .default(defaultWorkingDir)
 
     private val verbose: Boolean by option("-v", "--verbose", help = "")
         .flag()
 
+    private val workingDir: String by option("-d", "--dir", help = "")
+        .default(defaultWorkingDir)
+
+    private val inputFile by option("-i", "--input", help = "")
+        .file(readable = true, folderOkay = false, exists = true)
+
     private val outputFile by option("-o", "--output", help = "")
-        .file(writable = true, folderOkay = false)
+        .file(folderOkay = false)
 
     override fun run() {
         println(
             """
-            Algorithm Assistant
-            (Java Analyzer)
+            Java Analyzer
             
-            - className: $className
+            - mainClassName: $mainClassName
+            - inputFile: $inputFile
             - workingDir: $workingDir
             - verbose: $verbose
             - outputFile: $outputFile
@@ -50,25 +53,36 @@ class App : CliktCommand() {
             writter = PrintWriter(FileWriter(outputFile!!.path))
         }
 
-        val analyzer = Analyzer(className = className, verbose = verbose, writter = writter)
-        val frames = analyzer.analyze()
-        frames.forEach {
-            println("${it.javaClass.simpleName}=${it.methodName}:${it.line}")
+        val analyzer = Analyzer(className = mainClassName, inputFile = inputFile, verbose = verbose)
+        val output = analyzer.analyze()
+
+        writter.println("=== Output ===\n")
+        writter.println(output)
+
+        writter.println("=== Analyze frames (size: ${analyzer.analyzeFrames.size}) ===\n")
+
+        analyzer.analyzeFrames.forEach {
+            writter.println("${it.methodName}:${it.line}")
             if (it is StepFrame) {
                 it.variables.forEach {
-                    println(it)
+                    writter.println("\t$it")
                 }
-                println()
             } else if (it is ExceptionFrame) {
-                println(it.exceptionName)
-                println()
+                writter.println("\t${it.exceptionName}")
             }
+            writter.println()
         }
-        println("References per line")
-        println(analyzer.lineReferencesMap)
+
+        writter.println("\n=== References per line ===\n")
+        analyzer.lineReferencesMap.forEach { line, referenceCount ->
+            writter.println("\t$line: $referenceCount")
+        }
+
+        if (outputFile != null) {
+            writter.flush()
+        }
     }
 }
-
 
 fun main(args: Array<String>) {
     App().main(args)

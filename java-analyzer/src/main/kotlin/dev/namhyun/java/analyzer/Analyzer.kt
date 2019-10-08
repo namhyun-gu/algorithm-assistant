@@ -7,16 +7,14 @@ import com.sun.jdi.connect.LaunchingConnector
 import com.sun.jdi.connect.VMStartException
 import com.sun.jdi.event.*
 import com.sun.jdi.request.EventRequest
-import dev.namhyun.algorithm.assist.java.analyzer.model.*
 import dev.namhyun.java.analyzer.model.*
 import mu.KotlinLogging
-import java.io.IOException
-import java.io.PrintWriter
+import java.io.*
 import kotlin.collections.Map.Entry
 
 class Analyzer(
     private val className: String,
-    private val writter: PrintWriter,
+    private val inputFile: File? = null,
     verbose: Boolean
 ) {
     private val logger = if (verbose) KotlinLogging.logger {} else null
@@ -44,7 +42,8 @@ class Analyzer(
         requestEvents()
     }
 
-    fun analyze(): List<Frame> {
+    fun analyze(): String {
+        writeVMInput(inputFile)
         val eventQueue = vm.eventQueue()
         while (connected) {
             try {
@@ -61,7 +60,28 @@ class Analyzer(
                 // Ignore
             }
         }
-        return analyzeFrames
+        return readVMOutput()
+    }
+
+    private fun writeVMInput(file: File?) {
+        if (file != null) {
+            val fileReader = FileReader(file)
+            val processInputWriter = OutputStreamWriter(vm.process().outputStream)
+            var readed = 0
+            while (readed != -1) {
+                readed = fileReader.read()
+                processInputWriter.write(readed)
+                processInputWriter.flush()
+            }
+            fileReader.close()
+        }
+    }
+
+    private fun readVMOutput(): String {
+        var outputStr = ""
+        val processOutputReader = InputStreamReader(vm.process().inputStream)
+        processOutputReader.forEachLine { outputStr += "$it\n" }
+        return outputStr
     }
 
     private fun findLaunchingConnector(): LaunchingConnector? {
@@ -128,7 +148,7 @@ class Analyzer(
         is VMDeathEvent -> vmDeathEvent(event)
         is VMDisconnectEvent -> vmDisconnectEvent(event)
         else -> {
-            logger?.debug { "Unhandled event: $event" }
+            logger?.info { "Unhandled event: $event" }
         }
     }
 
@@ -155,12 +175,13 @@ class Analyzer(
     }
 
     private fun vmStartEvent(event: VMStartEvent) {
-        logger?.debug { "VM is started" }
+        logger?.info { "VM is started" }
     }
 
     private fun classPrepareEvent(event: ClassPrepareEvent) {
         val referenceType = event.referenceType()
         if (referenceType.name() == className) {
+            logger?.info { "${event.referenceType().name()} class is prepared" }
             val methods = referenceType.visibleMethods()
             methods.filterNot {
                 excludeMethods.contains(it.name())
@@ -168,7 +189,7 @@ class Analyzer(
                 if (!it.isNative) {
                     val breakpointRequest = vm.eventRequestManager().createBreakpointRequest(it.location())
                     if (!breakpointRequest.isEnabled) {
-                        logger?.debug { "Request breakpoint to ${it.name()}:${it.location().lineNumber()}" }
+                        logger?.info { "Request breakpoint to ${it.name()}:${it.location().lineNumber()}" }
                         breakpointRequest.enable()
                     }
                 }
@@ -180,20 +201,20 @@ class Analyzer(
         val currentMethod = event.method()
         val eventManager = vm.eventRequestManager()
 
-        logger?.debug { "Enter method ${currentMethod.name()}" }
+        logger?.info { "Enter method ${currentMethod.name()}" }
 
         val lineLocations = currentMethod.allLineLocations()
         lineLocations.forEach {
             val breakpointRequest = eventManager.createBreakpointRequest(it)
             if (!breakpointRequest.isEnabled) {
-                logger?.debug { "Request breakpoint to ${currentMethod.name()}:${it.lineNumber()}" }
+                logger?.info { "Request breakpoint to ${currentMethod.name()}:${it.lineNumber()}" }
                 breakpointRequest.enable()
             }
         }
     }
 
     private fun methodExitEvent(event: MethodExitEvent) {
-        logger?.debug { "Exit method ${event.method().name()}" }
+        logger?.info { "Exit method ${event.method().name()}" }
     }
 
     private fun stepEvent(event: StepEvent) {
@@ -203,7 +224,7 @@ class Analyzer(
     private fun breakpointEvent(event: BreakpointEvent) {
         val threadRef = event.thread()
         if (threadRef.frameCount() > 0) {
-            logger?.debug { "Breakpoint ${event.location().method().name()}:${event.location().lineNumber()}" }
+            logger?.info { "Breakpoint event ${event.location().method().name()}:${event.location().lineNumber()}" }
 
             val location = event.location()
             val stackFrame = threadRef.frames().first()
