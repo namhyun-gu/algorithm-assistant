@@ -12,25 +12,29 @@ import dev.namhyun.java.analyzer.model.StepFrame
 import java.io.FileWriter
 import java.io.PrintWriter
 
-class App : CliktCommand() {
+class App : CliktCommand(
+    name = "java-analyzer",
+    help = "Analyze '.class' file by Java Debug Interface.",
+    printHelpOnEmptyArgs = true
+) {
     private val defaultWorkingDir = getWorkingDirectory()
 
     private val mainClassName: String by argument()
         .default("Main")
 
-    private val workingDir: String by option("-d", "--dir", help = "")
+    private val workingDir: String by option("-d", "--dir", help = "Set working directory, defaults current directory")
         .default(defaultWorkingDir)
 
-    private val inputFile by option("-i", "--input", help = "")
+    private val inputFile by option("-i", "--input", help = "Redirection standard input using file")
         .file(readable = true, folderOkay = false, exists = true)
 
-    private val outputFile by option("-o", "--output", help = "")
+    private val outputFile by option("-o", "--output", help = "Redirection analyze output using file")
         .file(folderOkay = false)
 
-    private val jsonResult: Boolean by option("--json", help = "")
+    private val jsonResult: Boolean by option("--json", help = "Set output json format")
         .flag()
 
-    private val verbose: Boolean by option("-v", "--verbose", help = "")
+    private val verbose: Boolean by option("-v", "--verbose", help = "Print analyze logs")
         .flag()
 
     override fun run() {
