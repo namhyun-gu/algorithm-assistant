@@ -8,7 +8,7 @@ interface Variable {
 
 data class PrimitiveVariable(
     override val type: String,
-    override val name: String,
+    override val name: String = "",
     override val value: Any?
 ) : Variable
 
@@ -18,21 +18,21 @@ interface ReferenceVariable : Variable {
 
 data class ObjectVariable(
     override val type: String,
-    override val name: String,
+    override val name: String = "",
     override val value: Any?,
     override val uniqueId: Long
 ) : ReferenceVariable
 
 data class StringVariable(
     override val type: String = "String",
-    override val name: String,
+    override val name: String = "",
     override val value: Any?,
     override val uniqueId: Long
 ) : ReferenceVariable
 
 data class ArrayVariable(
     override val type: String = "Array",
-    override val name: String,
+    override val name: String = "",
     override val value: List<Any?>,
     override val uniqueId: Long,
     val size: Int
@@ -40,7 +40,7 @@ data class ArrayVariable(
 
 data class ArrayListVariable(
     override val type: String = "ArrayList",
-    override val name: String,
+    override val name: String = "",
     override val value: List<Any?>,
     override val uniqueId: Long,
     val size: Int

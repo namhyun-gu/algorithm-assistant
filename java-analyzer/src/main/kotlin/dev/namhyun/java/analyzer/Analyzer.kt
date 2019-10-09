@@ -289,11 +289,7 @@ class Analyzer(
                 )
             }
             is ObjectReference -> transformObjectReference(value, threadRef, variable)
-            else -> PrimitiveVariable(
-                type = variable.typeName(),
-                name = variable.name(),
-                value = transformPrimitiveValue(value)
-            )
+            else -> transformPrimitiveValue(value, variable)
         }
     }
 
@@ -321,11 +317,7 @@ class Analyzer(
                     emptyList(),
                     0
                 )
-                PrimitiveVariable(
-                    type = variable?.typeName() ?: value.type().name(),
-                    name = variable?.name() ?: "",
-                    value = transformPrimitiveValue(booleanValue)
-                )
+                transformPrimitiveValue(booleanValue, variable)
             }
             "java.lang.Byte",
             "java.lang.Double",
@@ -339,11 +331,7 @@ class Analyzer(
                     emptyList(),
                     0
                 )
-                PrimitiveVariable(
-                    type = variable?.typeName() ?: value.type().name(),
-                    name = variable?.name() ?: "",
-                    value = transformPrimitiveValue(intValue)
-                )
+                transformPrimitiveValue(intValue, variable)
             }
             "java.util.ArrayList" -> {
                 val sizeValue = value.invokeMethod(
@@ -377,16 +365,26 @@ class Analyzer(
         }
     }
 
-    private fun transformPrimitiveValue(value: Value): Any? = when (value) {
-        is BooleanValue -> value.value()
-        is ByteValue -> value.value()
-        is CharValue -> value.value()
-        is DoubleValue -> value.value()
-        is FloatValue -> value.value()
-        is IntegerValue -> value.value()
-        is LongValue -> value.value()
-        is ShortValue -> value.value()
-        else -> null
+    private fun transformPrimitiveValue(
+        value: Value,
+        variable: LocalVariable? = null
+    ): PrimitiveVariable {
+        val primitiveValue: Any? = when (value) {
+            is BooleanValue -> value.value()
+            is ByteValue -> value.value()
+            is CharValue -> value.value()
+            is DoubleValue -> value.value()
+            is FloatValue -> value.value()
+            is IntegerValue -> value.value()
+            is LongValue -> value.value()
+            is ShortValue -> value.value()
+            else -> null
+        }
+        return PrimitiveVariable(
+            type = variable?.typeName() ?: value.type().name(),
+            name = variable?.name() ?: "",
+            value = primitiveValue
+        )
     }
 
     private fun exceptionEvent(event: ExceptionEvent) {
