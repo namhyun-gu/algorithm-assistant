@@ -23,101 +23,144 @@
 Input java source
 
 ```java
-1   import java.util.Scanner;
-2 
-3   public class Main2 {
-4     public static void main(String[] args) {
-5        Scanner scanner = new Scanner(System.in);
-6        int count = scanner.nextInt();
-7        for (int index = 0; index < count; index++) {
-8            System.out.println("Hello");
-9        }
-10    }
-11  }
+public class BubbleSort {
+    public static void main(String[] args) {
+        int[] items = {3, 1, 2};
+        new BubbleSort().bubbleSort(items);
+        for (int item : items) {
+            System.out.println(item);
+        }
+    }
+
+    void bubbleSort(int[] data) {
+        for (int i = 0; i < data.length - 1; i++) {
+            for (int j = 0; j < data.length - 1; j++) {
+                if (data[j] > data[j + 1]) { // swap
+                    int temp = data[j];
+                    data[j] = data[j + 1];
+                    data[j + 1] = temp;
+                }
+            }
+        }
+    }
+}
 ```
 
 Analzer result
 
 ```bash
-PS C:\Users\namhyun-gu\Downloads> java -jar .\java.analyzer-1.0-SNAPSHOT.jar -i hello.txt Main2
+PS C:\Users\namhyun-gu\Downloads> java -jar .\java.analyzer-1.0-SNAPSHOT.jar BubbleSort
 Java Analyzer
 
-- mainClassName: Main2
-- inputFile: hello.txt
+- mainClassName: BubbleSort
 - workingDir: C:\Users\namhyun-gu\Downloads
-- verbose: false
+- inputFile: null
 - outputFile: null
+- verbose: false
 
 === Output ===
 
-Hello
-Hello
-Hello
+1
+2
+3
 
-=== Analyze frames (size: 10) ===
+=== Analyze frames (size: 34) ===
+
+main:3
+        MethodEntryFrame(methodName=main, line=3)
+
+main:3
+        ArrayVariable(type=Array, name=args, value=[], uniqueId=84, size=0)
+
+main:4
+        ArrayVariable(type=Array, name=args, value=[], uniqueId=84, size=0)
+        ArrayVariable(type=Array, name=items, value=[3, 1, 2], uniqueId=85, size=3)
+
+bubbleSort:11
+        MethodEntryFrame(methodName=bubbleSort, line=11)
+
+bubbleSort:11
+        ArrayVariable(type=Array, name=data, value=[3, 1, 2], uniqueId=85, size=3)
+
+bubbleSort:12
+        ArrayVariable(type=Array, name=data, value=[3, 1, 2], uniqueId=85, size=3)
+        PrimitiveVariable(type=int, name=i, value=0)
+
+bubbleSort:13
+        ArrayVariable(type=Array, name=data, value=[3, 1, 2], uniqueId=85, size=3)
+        PrimitiveVariable(type=int, name=i, value=0)
+        PrimitiveVariable(type=int, name=j, value=0)
+
+	(... Skip 16 frames)
+
+bubbleSort:12
+        ArrayVariable(type=Array, name=data, value=[1, 2, 3], uniqueId=85, size=3)
+        PrimitiveVariable(type=int, name=i, value=1)
+        PrimitiveVariable(type=int, name=j, value=1)
+
+bubbleSort:11
+        ArrayVariable(type=Array, name=data, value=[1, 2, 3], uniqueId=85, size=3)
+        PrimitiveVariable(type=int, name=i, value=1)
+
+bubbleSort:20
+        ArrayVariable(type=Array, name=data, value=[1, 2, 3], uniqueId=85, size=3)
+
+bubbleSort:20
+        MethodExitFrame(methodName=bubbleSort, line=20)
 
 main:5
-	ArrayVariable(name='args', values=[], size=0, uniqueId=84)
+        ArrayVariable(type=Array, name=args, value=[], uniqueId=84, size=0)
+        ArrayVariable(type=Array, name=items, value=[1, 2, 3], uniqueId=85, size=3)
 
 main:6
-	ArrayVariable(name='args', values=[], size=0, uniqueId=84)
-	ObjectVariable(type='java.util.Scanner', name='scanner', value=instance of java.util.Scanner(id=377), uniqueId=377)
+        ArrayVariable(type=Array, name=args, value=[], uniqueId=84, size=0)
+        ArrayVariable(type=Array, name=items, value=[1, 2, 3], uniqueId=85, size=3)
+        PrimitiveVariable(type=int, name=item, value=1)
 
-main:7
-	ArrayVariable(name='args', values=[], size=0, uniqueId=84)
-	ObjectVariable(type='java.util.Scanner', name='scanner', value=instance of java.util.Scanner(id=377), uniqueId=377)
-	Variable(type='int', name='count', value=3)
+main:5
+        ArrayVariable(type=Array, name=args, value=[], uniqueId=84, size=0)
+        ArrayVariable(type=Array, name=items, value=[1, 2, 3], uniqueId=85, size=3)
 
-main:8
-	ArrayVariable(name='args', values=[], size=0, uniqueId=84)
-	ObjectVariable(type='java.util.Scanner', name='scanner', value=instance of java.util.Scanner(id=377), uniqueId=377)
-	Variable(type='int', name='count', value=3)
-	Variable(type='int', name='index', value=0)
+main:6
+        ArrayVariable(type=Array, name=args, value=[], uniqueId=84, size=0)
+        ArrayVariable(type=Array, name=items, value=[1, 2, 3], uniqueId=85, size=3)
+        PrimitiveVariable(type=int, name=item, value=2)
 
-main:7
-	ArrayVariable(name='args', values=[], size=0, uniqueId=84)
-	ObjectVariable(type='java.util.Scanner', name='scanner', value=instance of java.util.Scanner(id=377), uniqueId=377)
-	Variable(type='int', name='count', value=3)
-	Variable(type='int', name='index', value=0)
+main:5
+        ArrayVariable(type=Array, name=args, value=[], uniqueId=84, size=0)
+        ArrayVariable(type=Array, name=items, value=[1, 2, 3], uniqueId=85, size=3)
 
-main:8
-	ArrayVariable(name='args', values=[], size=0, uniqueId=84)
-	ObjectVariable(type='java.util.Scanner', name='scanner', value=instance of java.util.Scanner(id=377), uniqueId=377)
-	Variable(type='int', name='count', value=3)
-	Variable(type='int', name='index', value=1)
+main:6
+        ArrayVariable(type=Array, name=args, value=[], uniqueId=84, size=0)
+        ArrayVariable(type=Array, name=items, value=[1, 2, 3], uniqueId=85, size=3)
+        PrimitiveVariable(type=int, name=item, value=3)
 
-main:7
-	ArrayVariable(name='args', values=[], size=0, uniqueId=84)
-	ObjectVariable(type='java.util.Scanner', name='scanner', value=instance of java.util.Scanner(id=377), uniqueId=377)
-	Variable(type='int', name='count', value=3)
-	Variable(type='int', name='index', value=1)
+main:5
+        ArrayVariable(type=Array, name=args, value=[], uniqueId=84, size=0)
+        ArrayVariable(type=Array, name=items, value=[1, 2, 3], uniqueId=85, size=3)
 
 main:8
-	ArrayVariable(name='args', values=[], size=0, uniqueId=84)
-	ObjectVariable(type='java.util.Scanner', name='scanner', value=instance of java.util.Scanner(id=377), uniqueId=377)
-	Variable(type='int', name='count', value=3)
-	Variable(type='int', name='index', value=2)
+        ArrayVariable(type=Array, name=args, value=[], uniqueId=84, size=0)
+        ArrayVariable(type=Array, name=items, value=[1, 2, 3], uniqueId=85, size=3)
 
-main:7
-	ArrayVariable(name='args', values=[], size=0, uniqueId=84)
-	ObjectVariable(type='java.util.Scanner', name='scanner', value=instance of java.util.Scanner(id=377), uniqueId=377)
-	Variable(type='int', name='count', value=3)
-	Variable(type='int', name='index', value=2)
-
-main:10
-	ArrayVariable(name='args', values=[], size=0, uniqueId=84)
-	ObjectVariable(type='java.util.Scanner', name='scanner', value=instance of java.util.Scanner(id=377), uniqueId=377)
-	Variable(type='int', name='count', value=3)
+main:8
+        MethodExitFrame(methodName=main, line=8)
 
 
 === References per line ===
 
-	5: 1
-	6: 1
-	7: 4
-	8: 3
-	10: 1
-
+        3: 1
+        4: 1
+        11: 3
+        12: 6
+        13: 4
+        14: 2
+        15: 2
+        16: 2
+        20: 1
+        5: 4
+        6: 3
+        8: 1
 ```
 
 ## License
