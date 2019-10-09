@@ -203,12 +203,14 @@ class Analyzer(
 
         logger?.info { "Enter method ${currentMethod.name()}" }
 
-        analyzeFrames.add(
-            MethodEntryFrame(
-                methodName = currentMethod.name(),
-                line = event.location().lineNumber()
+        if (!excludeMethods.contains(currentMethod.name())) {
+            analyzeFrames.add(
+                MethodEntryFrame(
+                    methodName = currentMethod.name(),
+                    line = event.location().lineNumber()
+                )
             )
-        )
+        }
 
         val lineLocations = currentMethod.allLineLocations()
         lineLocations.forEach {
@@ -223,12 +225,14 @@ class Analyzer(
     private fun methodExitEvent(event: MethodExitEvent) {
         logger?.info { "Exit method ${event.method().name()}" }
 
-        analyzeFrames.add(
-            MethodExitFrame(
-                methodName = event.method().name(),
-                line = event.location().lineNumber()
+        if (!excludeMethods.contains(event.method().name())) {
+            analyzeFrames.add(
+                MethodExitFrame(
+                    methodName = event.method().name(),
+                    line = event.location().lineNumber()
+                )
             )
-        )
+        }
     }
 
     private fun stepEvent(event: StepEvent) {
