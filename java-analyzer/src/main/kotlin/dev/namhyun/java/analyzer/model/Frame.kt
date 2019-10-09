@@ -1,30 +1,28 @@
 package dev.namhyun.java.analyzer.model
 
-open class Frame(
-    open val methodName: String,
-    open val line: Int
-) {
-    override fun toString(): String {
-        return "Frame(methodName='$methodName', line=$line)"
-    }
+interface Frame {
+    val methodName: String
+    val line: Int
 }
 
-class StepFrame(
+data class StepFrame(
     override val methodName: String,
     override val line: Int,
     val variables: List<Variable>
-) : Frame(methodName, line) {
-    override fun toString(): String {
-        return "StepFrame(methodName='$methodName', line=$line, variables=$variables)"
-    }
-}
+) : Frame
 
-class ExceptionFrame(
+data class ExceptionFrame(
     override val methodName: String,
     override val line: Int,
     val exceptionName: String
-) : Frame(methodName, line) {
-    override fun toString(): String {
-        return "ExceptionFrame(methodName='$methodName', line=$line, exceptionName='$exceptionName')"
-    }
-}
+) : Frame
+
+data class MethodEntryFrame(
+    override val methodName: String,
+    override val line: Int
+) : Frame
+
+data class MethodExitFrame(
+    override val methodName: String,
+    override val line: Int
+) : Frame

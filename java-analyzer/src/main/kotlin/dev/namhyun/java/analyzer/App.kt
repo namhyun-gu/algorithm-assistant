@@ -18,9 +18,6 @@ class App : CliktCommand() {
     private val mainClassName: String by argument()
         .default("Main")
 
-    private val verbose: Boolean by option("-v", "--verbose", help = "")
-        .flag()
-
     private val workingDir: String by option("-d", "--dir", help = "")
         .default(defaultWorkingDir)
 
@@ -30,16 +27,19 @@ class App : CliktCommand() {
     private val outputFile by option("-o", "--output", help = "")
         .file(folderOkay = false)
 
+    private val verbose: Boolean by option("-v", "--verbose", help = "")
+        .flag()
+
     override fun run() {
         println(
             """
             Java Analyzer
             
             - mainClassName: $mainClassName
-            - inputFile: $inputFile
             - workingDir: $workingDir
-            - verbose: $verbose
+            - inputFile: $inputFile
             - outputFile: $outputFile
+            - verbose: $verbose
             
             """.trimIndent()
         )
@@ -69,6 +69,8 @@ class App : CliktCommand() {
                 }
             } else if (it is ExceptionFrame) {
                 writter.println("\t${it.exceptionName}")
+            } else {
+                writter.println("\t$it")
             }
             writter.println()
         }

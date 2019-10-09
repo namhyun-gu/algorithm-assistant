@@ -203,6 +203,13 @@ class Analyzer(
 
         logger?.info { "Enter method ${currentMethod.name()}" }
 
+        analyzeFrames.add(
+            MethodEntryFrame(
+                methodName = currentMethod.name(),
+                line = event.location().lineNumber()
+            )
+        )
+
         val lineLocations = currentMethod.allLineLocations()
         lineLocations.forEach {
             val breakpointRequest = eventManager.createBreakpointRequest(it)
@@ -215,6 +222,13 @@ class Analyzer(
 
     private fun methodExitEvent(event: MethodExitEvent) {
         logger?.info { "Exit method ${event.method().name()}" }
+
+        analyzeFrames.add(
+            MethodExitFrame(
+                methodName = event.method().name(),
+                line = event.location().lineNumber()
+            )
+        )
     }
 
     private fun stepEvent(event: StepEvent) {
@@ -258,7 +272,7 @@ class Analyzer(
                 val values = value.values.map { transformValue(it, threadRef) }
                 ArrayVariable(
                     name = variable.name(),
-                    values = values,
+                    value = values,
                     size = values.size,
                     uniqueId = value.uniqueID()
                 )
@@ -271,7 +285,7 @@ class Analyzer(
                 )
             }
             is ObjectReference -> transformObjectReference(value, threadRef, variable)
-            else -> Variable(
+            else -> PrimitiveVariable(
                 type = variable.typeName(),
                 name = variable.name(),
                 value = transformPrimitiveValue(value)
@@ -303,7 +317,7 @@ class Analyzer(
                     emptyList(),
                     0
                 )
-                Variable(
+                PrimitiveVariable(
                     type = variable?.typeName() ?: value.type().name(),
                     name = variable?.name() ?: "",
                     value = transformPrimitiveValue(booleanValue)
@@ -321,7 +335,7 @@ class Analyzer(
                     emptyList(),
                     0
                 )
-                Variable(
+                PrimitiveVariable(
                     type = variable?.typeName() ?: value.type().name(),
                     name = variable?.name() ?: "",
                     value = transformPrimitiveValue(intValue)
@@ -345,7 +359,7 @@ class Analyzer(
                     emptyList()
                 ArrayListVariable(
                     name = variable?.name() ?: "",
-                    values = values,
+                    value = values,
                     size = size,
                     uniqueId = value.uniqueID()
                 )
