@@ -27,6 +27,9 @@ class App : CliktCommand() {
     private val outputFile by option("-o", "--output", help = "")
         .file(folderOkay = false)
 
+    private val jsonResult: Boolean by option("--json", help = "")
+        .flag()
+
     private val verbose: Boolean by option("-v", "--verbose", help = "")
         .flag()
 
@@ -39,6 +42,7 @@ class App : CliktCommand() {
             - workingDir: $workingDir
             - inputFile: $inputFile
             - outputFile: $outputFile
+            - jsonResult: $jsonResult
             - verbose: $verbose
             
             """.trimIndent()
@@ -56,32 +60,46 @@ class App : CliktCommand() {
         val analyzer = Analyzer(className = mainClassName, inputFile = inputFile, verbose = verbose)
         val output = analyzer.analyze()
 
-        writter.println("=== Output ===\n")
-        writter.println(output)
+        if (jsonResult) {
+            val jsonObj = mapOf(
+                "output" to output,
+                "framesSize" to analyzer.analyzeFrames.size,
+                "frames" to analyzer.analyzeFrames,
+                "referencesCountsSize" to analyzer.lineReferencesMap.size,
+                "referenceCounts" to analyzer.lineReferencesMap
+            )
 
-        writter.println("=== Analyze frames (size: ${analyzer.analyzeFrames.size}) ===\n")
+            val json = GsonAdapterBuilder().build().toJson(jsonObj)
+            writter.write(json)
+            writter.flush()
+        } else {
+            writter.println("=== Output ===\n")
+            writter.println(output)
 
-        analyzer.analyzeFrames.forEach {
-            writter.println("${it.methodName}:${it.line}")
-            if (it is StepFrame) {
-                it.variables.forEach {
+            writter.println("=== Analyze frames (size: ${analyzer.analyzeFrames.size}) ===\n")
+
+            analyzer.analyzeFrames.forEach {
+                writter.println("${it.methodName}:${it.line}")
+                if (it is StepFrame) {
+                    it.variables.forEach {
+                        writter.println("\t$it")
+                    }
+                } else if (it is ExceptionFrame) {
+                    writter.println("\t${it.exceptionName}")
+                } else {
                     writter.println("\t$it")
                 }
-            } else if (it is ExceptionFrame) {
-                writter.println("\t${it.exceptionName}")
-            } else {
-                writter.println("\t$it")
+                writter.println()
             }
-            writter.println()
-        }
 
-        writter.println("\n=== References per line ===\n")
-        analyzer.lineReferencesMap.forEach { line, referenceCount ->
-            writter.println("\t$line: $referenceCount")
-        }
+            writter.println("\n=== References per line ===\n")
+            analyzer.lineReferencesMap.forEach { line, referenceCount ->
+                writter.println("\t$line: $referenceCount")
+            }
 
-        if (outputFile != null) {
-            writter.flush()
+            if (outputFile != null) {
+                writter.flush()
+            }
         }
     }
 }

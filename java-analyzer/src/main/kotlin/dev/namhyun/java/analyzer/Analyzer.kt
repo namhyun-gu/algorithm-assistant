@@ -371,7 +371,7 @@ class Analyzer(
             else -> ObjectVariable(
                 type = variable?.typeName() ?: value.type().name(),
                 name = variable?.name() ?: "",
-                value = value,
+                value = null,
                 uniqueId = value.uniqueID()
             )
         }

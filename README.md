@@ -13,6 +13,7 @@
 - Analyze '.class' file by Java Debug Interface.
 - Provided features
   - Support input redirection
+	- Support json output
 - Provided information
   - Local variables per line
   - Reference count per line
