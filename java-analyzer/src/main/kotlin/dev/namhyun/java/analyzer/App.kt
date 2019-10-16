@@ -7,8 +7,6 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
-import dev.namhyun.java.analyzer.model.ExceptionFrame
-import dev.namhyun.java.analyzer.model.StepFrame
 import java.io.FileWriter
 import java.io.PrintWriter
 
@@ -38,73 +36,40 @@ class App : CliktCommand(
         .flag()
 
     override fun run() {
-        println(
-            """
-            Java Analyzer
-            
-            - mainClassName: $mainClassName
-            - workingDir: $workingDir
-            - inputFile: $inputFile
-            - outputFile: $outputFile
-            - jsonResult: $jsonResult
-            - verbose: $verbose
-            
-            """.trimIndent()
-        )
+        if (verbose) {
+            println(
+                """
+                    Argument, Options Info
+                    
+                    - mainClassName: $mainClassName
+                    - workingDir: $workingDir
+                    - inputFile: $inputFile
+                    - outputFile: $outputFile
+                    - jsonResult: $jsonResult
+                    - verbose: $verbose
+                """.trimIndent()
+            )
+        }
 
         if (workingDir != defaultWorkingDir) {
             updateWorkingDirectory(workingDir)
         }
 
-        var writter = PrintWriter(System.out, true)
+        var printWriter = PrintWriter(System.out, true)
         if (outputFile != null) {
-            writter = PrintWriter(FileWriter(outputFile!!.path))
+            printWriter = PrintWriter(FileWriter(outputFile!!.path))
         }
 
         val analyzer = Analyzer(className = mainClassName, inputFile = inputFile, verbose = verbose)
         val output = analyzer.analyze()
 
-        if (jsonResult) {
-            val jsonObj = mapOf(
-                "output" to output,
-                "framesSize" to analyzer.analyzeFrames.size,
-                "frames" to analyzer.analyzeFrames,
-                "referencesCountsSize" to analyzer.lineReferencesMap.size,
-                "referenceCounts" to analyzer.lineReferencesMap
-            )
-
-            val json = GsonAdapterBuilder().build().toJson(jsonObj)
-            writter.write(json)
-            writter.flush()
+        val resultWriter: ResultWriter
+        resultWriter = if (jsonResult) {
+            JsonWriter(printWriter)
         } else {
-            writter.println("=== Output ===\n")
-            writter.println(output)
-
-            writter.println("=== Analyze frames (size: ${analyzer.analyzeFrames.size}) ===\n")
-
-            analyzer.analyzeFrames.forEach {
-                writter.println("${it.methodName}:${it.line}")
-                if (it is StepFrame) {
-                    it.variables.forEach {
-                        writter.println("\t$it")
-                    }
-                } else if (it is ExceptionFrame) {
-                    writter.println("\t${it.exceptionName}")
-                } else {
-                    writter.println("\t$it")
-                }
-                writter.println()
-            }
-
-            writter.println("\n=== References per line ===\n")
-            analyzer.lineReferencesMap.forEach { line, referenceCount ->
-                writter.println("\t$line: $referenceCount")
-            }
-
-            if (outputFile != null) {
-                writter.flush()
-            }
+            DefaultWriter(printWriter)
         }
+        resultWriter.write(output, analyzer.analyzeFrames, analyzer.lineReferencesMap)
     }
 }
 
