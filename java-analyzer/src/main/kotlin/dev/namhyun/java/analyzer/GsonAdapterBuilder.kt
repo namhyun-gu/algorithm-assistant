@@ -15,8 +15,10 @@ class GsonAdapterBuilder {
             beginObject()
             name("type")
             value(it.type)
-            name("name")
-            value(it.name)
+            if (it.name.isNotEmpty()) {
+                name("name")
+                value(it.name)
+            }
             name("value")
             value(it.value?.toString())
             endObject()
@@ -29,8 +31,10 @@ class GsonAdapterBuilder {
             beginObject()
             name("type")
             value(it.type)
-            name("name")
-            value(it.name)
+            if (it.name.isNotEmpty()) {
+                name("name")
+                value(it.name)
+            }
             name("uniqueId")
             value(it.uniqueId)
             endObject()
@@ -43,8 +47,10 @@ class GsonAdapterBuilder {
             beginObject()
             name("type")
             value(it.type)
-            name("name")
-            value(it.name)
+            if (it.name.isNotEmpty()) {
+                name("name")
+                value(it.name)
+            }
             name("value")
             beginArray()
             it.value.forEach { value ->
@@ -86,8 +92,10 @@ class GsonAdapterBuilder {
             beginObject()
             name("type")
             value(it.type)
-            name("name")
-            value(it.name)
+            if (it.name.isNotEmpty()) {
+                name("name")
+                value(it.name)
+            }
             name("value")
             beginArray()
             it.value.forEach { value ->
